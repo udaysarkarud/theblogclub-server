@@ -36,7 +36,15 @@ const main = async () => {
 
         // Add new blog post
         app.get('/blogposts', async (req, res) => {
-            const data = blogsDataCollection.find({})
+            let data;
+            if(req.query.search){
+                const searchText = req.query.search;
+                const filter = { blogTitle: new RegExp(searchText,'i') }
+                data = blogsDataCollection.find(filter)
+            }else{
+                data = blogsDataCollection.find({})
+            }
+
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
 
@@ -57,7 +65,7 @@ const main = async () => {
 main().catch(console.dir)
 
 app.get('/', (req, res) => {
-    res.send('Hello from backend')
+    res.send('The Blog Club : Backend')
 })
 
 app.listen(port, () => {
