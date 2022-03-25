@@ -34,12 +34,16 @@ const main = async () => {
             res.send(result)
         })
 
-        // Add new blog post
+        // Get All Blog Posts
         app.get('/blogposts', async (req, res) => {
             let data;
             if(req.query.search){
                 const searchText = req.query.search;
                 const filter = { blogTitle: new RegExp(searchText,'i') }
+                data = blogsDataCollection.find(filter)
+            }else if(req.query.category){
+                const category = req.query.category;
+                const filter = { blogCategory: new RegExp(category,'i') }
                 data = blogsDataCollection.find(filter)
             }else{
                 data = blogsDataCollection.find({})
