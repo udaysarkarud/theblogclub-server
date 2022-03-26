@@ -71,13 +71,9 @@ const main = async () => {
 
         // Add new blog post comments
         app.post('/addnewcmt', async (req, res) => {
-
-            const blogDetails = req.body
-            const result = await cmtDataCollection.insertOne(blogDetails)
+            const cmtDetails = req.body
+            const result = await cmtDataCollection.insertOne(cmtDetails)
             res.send(result)
-
-
-
         })
 
         // Get blog comments
