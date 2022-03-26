@@ -20,10 +20,7 @@ const main = async () => {
         await client.connect();
         const database = client.db("theblogclub");
         const blogsDataCollection = database.collection("blogPosts");
-/*         const usersDataCollection = database.collection("usersData");
-        const productsDataCollection = database.collection("productsData");
-        const ordersDataCollection = database.collection("ordersData");
-        const reviewsDataCollection = database.collection("reviewsData"); */
+        const cmtDataCollection = database.collection("postComments");
 
 
 
@@ -37,15 +34,15 @@ const main = async () => {
         // Get All Blog Posts
         app.get('/blogposts', async (req, res) => {
             let data;
-            if(req.query.search){
+            if (req.query.search) {
                 const searchText = req.query.search;
-                const filter = { blogTitle: new RegExp(searchText,'i') }
+                const filter = { blogTitle: new RegExp(searchText, 'i') }
                 data = blogsDataCollection.find(filter)
-            }else if(req.query.category){
+            } else if (req.query.category) {
                 const category = req.query.category;
-                const filter = { blogCategory: new RegExp(category,'i') }
+                const filter = { blogCategory: new RegExp(category, 'i') }
                 data = blogsDataCollection.find(filter)
-            }else{
+            } else {
                 data = blogsDataCollection.find({})
             }
 
@@ -59,6 +56,37 @@ const main = async () => {
                 count,
                 allPosts
             })
+        })
+
+
+        // Get Single Post Details?bgid
+        app.get('/singlepostdetails', async (req, res) => {
+
+            const bgid = req.query.bgid
+            const blogPostId = { _id: ObjectId(bgid) }
+            postDetails = await blogsDataCollection.findOne(blogPostId)
+
+            res.send(postDetails)
+        })
+
+        // Add new blog post comments
+        app.post('/addnewcmt', async (req, res) => {
+
+            const blogDetails = req.body
+            const result = await cmtDataCollection.insertOne(blogDetails)
+            res.send(result)
+
+
+
+        })
+
+        // Get blog comments
+        app.get('/blogcmts/:bgid', async (req, res) => {
+            const getBgid = req.params.bgid
+            const data = await cmtDataCollection.find({}).toArray()
+            const filter = data.filter(aa => aa.bgid === getBgid)
+            res.send(filter)
+
         })
 
     }
